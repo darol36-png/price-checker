@@ -64,8 +64,19 @@ jobs:
           npm ci
           npm ci --prefix site
 
+      - name: Validate deploy secrets
+        run: |
+          missing=0
+          if [ -z "${{ secrets.HERENOW_API_KEY }}" ]; then echo "::error::Brak sekretu HERENOW_API_KEY"; missing=1; fi
+          if [ -z "${{ secrets.VITE_SUPABASE_URL }}" ]; then echo "::error::Brak sekretu VITE_SUPABASE_URL"; missing=1; fi
+          if [ -z "${{ secrets.VITE_SUPABASE_ANON_KEY }}" ]; then echo "::error::Brak sekretu VITE_SUPABASE_ANON_KEY"; missing=1; fi
+          if [ -z "${{ vars.HERENOW_SLUG }}" ]; then echo "::error::Brak zmiennej HERENOW_SLUG (Variables, nie Secrets)"; missing=1; fi
+          exit $missing
+
       - name: Install here.now publish script
-        run: npx --yes skills add heredotnow/skill --skill here-now -g
+        run: |
+          git clone --depth 1 https://github.com/heredotnow/skill.git /tmp/herenow-skill
+          echo "PUBLISH_SH=/tmp/herenow-skill/here-now/scripts/publish.sh" >> "$GITHUB_ENV"
 
       - name: Build and deploy to here.now
         run: bash scripts/ci-deploy.sh

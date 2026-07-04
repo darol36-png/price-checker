@@ -42,7 +42,11 @@ rm -f "$INDEX_HTML.bak"
 
 PUBLISH_SH="${PUBLISH_SH:-$HOME/.agents/skills/here-now/scripts/publish.sh}"
 if [[ ! -x "$PUBLISH_SH" ]]; then
-  die "Nie znaleziono publish.sh — zainstaluj skill: npx skills add heredotnow/skill --skill here-now -g"
+  die "Nie znaleziono publish.sh pod ścieżką: $PUBLISH_SH"
+fi
+
+if ! command -v jq >/dev/null 2>&1; then
+  die "Brak jq — wymagany przez publish.sh"
 fi
 
 echo "Publishing to https://${HERENOW_SLUG}.here.now/ …" >&2

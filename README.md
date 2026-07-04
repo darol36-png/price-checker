@@ -54,6 +54,8 @@ Po pushu na `main`: testy → build → deploy → smoke test.
 
 Konfiguracja sekretów i zmiennych: **[docs/github-cicd.md](docs/github-cicd.md)**
 
+Jeśli deploy pada, sprawdź w logach joba `deploy` krok **Validate deploy secrets** — wypisze brakujące nazwy.
+
 ### Deploy ręczny
 
 1. Zainstaluj skill: `npx skills add heredotnow/skill --skill here-now -g`
