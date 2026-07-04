@@ -1,0 +1,11 @@
+node_modules/
+dist/
+site/dist/
+.env
+.env.*
+!.env.example
+.herenow/
+*.local
+playwright-report/
+test-results/
+.DS_Store
