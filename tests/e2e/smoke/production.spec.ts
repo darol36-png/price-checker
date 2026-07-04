@@ -28,7 +28,7 @@ test.describe('Production smoke', () => {
     expect(html).toContain('root')
   })
 
-  test('proxy Jina Reader odpowiada (bez klucza — może być 401/429, nie 5xx)', async ({
+  test('proxy Jina Reader jest aktywny (nie zwraca HTML aplikacji)', async ({
     page,
     baseURL,
   }) => {
@@ -41,5 +41,22 @@ test.describe('Production smoke', () => {
     })
 
     expect(response.status()).toBeLessThan(500)
+
+    const body = await response.text()
+    expect(body).not.toContain('<div id="root"></div>')
+    expect(body).not.toMatch(/<title>Price Checker<\/title>/i)
+  })
+
+  test('proxy Jina GET nie zwraca HTML aplikacji', async ({ page, baseURL }) => {
+    test.skip(!baseURL, 'Brak baseURL w konfiguracji Playwright')
+
+    const encoded = encodeURIComponent('https://example.com')
+    const response = await page.request.get(`${baseURL}/api/fetch/${encoded}`)
+
+    expect(response.status()).toBeLessThan(500)
+
+    const body = await response.text()
+    expect(body).not.toContain('<div id="root"></div>')
+    expect(body).not.toMatch(/<title>Price Checker<\/title>/i)
   })
 })

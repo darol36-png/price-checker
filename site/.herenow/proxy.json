@@ -1,0 +1,28 @@
+{
+  "proxies": {
+    "/api/ispot/*": {
+      "upstream": "https://ispot.pl/",
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+        "Accept-Language": "pl-PL,pl;q=0.9,en;q=0.8"
+      },
+      "rateLimit": "60/minute/ip"
+    },
+    "/api/jina-reader": {
+      "upstream": "https://r.jina.ai/",
+      "method": "POST",
+      "headers": {
+        "Authorization": "Bearer ${JINA_API_KEY}",
+        "Content-Type": "application/json"
+      },
+      "rateLimit": "60/minute/ip"
+    },
+    "/api/fetch/*": {
+      "upstream": "https://r.jina.ai/",
+      "headers": {
+        "Authorization": "Bearer ${JINA_API_KEY}"
+      },
+      "rateLimit": "60/minute/ip"
+    }
+  }
+}

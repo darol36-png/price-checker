@@ -33,6 +33,9 @@ BUILD_STAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 INDEX_HTML="site/dist/index.html"
 [[ -f "$INDEX_HTML" ]] || die "brak $INDEX_HTML po buildzie"
 
+PROXY_JSON="site/dist/.herenow/proxy.json"
+[[ -f "$PROXY_JSON" ]] || die "brak $PROXY_JSON — proxy here.now nie zostanie skonfigurowane (sprawdź site/.herenow/proxy.json w repo)"
+
 if grep -q '<!-- build:' "$INDEX_HTML"; then
   sed -i.bak "s|<!-- build:.* -->|<!-- build: $BUILD_STAMP -->|" "$INDEX_HTML"
 else
