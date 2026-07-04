@@ -1,32 +1,27 @@
-# React + TypeScript + Vite
+# Frontend — Price Checker
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Katalog `site/` zawiera aplikację React (SPA) — jedyny moduł z kodem UI.
 
-Currently, two official plugins are available:
+Pełna dokumentacja projektu: **[../docs/project.md](../docs/project.md)**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Szybko
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+# z katalogu głównego repozytorium
+npm run dev      # http://localhost:5173
+npm run build    # wynik w site/dist/
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Wymaga pliku `.env` w katalogu głównym (patrz `../.env.example`).
+
+## Struktura `src/`
+
+| Katalog | Zawartość |
+|---------|-----------|
+| `components/` | Formularze, lista produktów, banner cen |
+| `hooks/` | Auth, CRUD produktów, sprawdzanie cen |
+| `lib/` | Parser cen, fetch stron, klient Supabase |
+| `pages/` | Login, Dashboard |
+| `types/` | Typy TypeScript |
+
+Konfiguracja proxy produkcyjnego: `.herenow/proxy.json` (kopiowany do `dist/` przy buildzie).

@@ -71,6 +71,7 @@ npm run deploy
 
 ## Dokumentacja
 
+- **[Dokumentacja projektu](docs/project.md)** — stack, struktura katalogów, zmienne konfiguracyjne, architektura
 - [PRD](docs/prd.md) — wymagania produktowe
 - [Test Plan](docs/test-plan.md) — ryzyka i mapowanie na testy
 - [Roadmap](docs/roadmap.md) — plan rozwoju
@@ -79,11 +80,15 @@ npm run deploy
 
 ## Struktura
 
+Szczegółowy opis katalogów: **[docs/project.md](docs/project.md)**
+
 ```
 price-checker/
 ├── site/              # Frontend (React SPA)
 ├── supabase/          # Migracje SQL
 ├── tests/             # Vitest + Playwright
+├── scripts/           # Deploy (lokalny i CI)
+├── .github/workflows/ # CI/CD GitHub Actions
 ├── context/foundation/# Plan testów (workflow 10x)
-└── docs/              # Dokumentacja kontekstowa
+└── docs/              # Dokumentacja
 ```
