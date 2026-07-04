@@ -32,6 +32,7 @@
 - [x] Deploy na here.now
 - [x] Smoke test na produkcji (`npm run test:smoke`)
 - [x] Test integracyjny RLS (`npm run test:integration`)
+- [x] CI/CD z GitHub Actions (auto-deploy na `main`)
 
 ## Faza 4 — Przyszłość (backlog)
 

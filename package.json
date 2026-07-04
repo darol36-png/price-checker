@@ -13,7 +13,8 @@
     "test:e2e": "playwright test",
     "test:smoke": "playwright test --config playwright.smoke.config.ts",
     "preview": "npm run preview --prefix site",
-    "deploy": "bash scripts/deploy.sh"
+    "deploy": "bash scripts/deploy.sh",
+    "deploy:ci": "bash scripts/ci-deploy.sh"
   },
   "devDependencies": {
     "@playwright/test": "^1.52.0",

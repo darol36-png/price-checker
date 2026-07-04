@@ -139,11 +139,16 @@ Test tworzy tymczasowe produkty, weryfikuje izolację między użytkownikami A i
 2. Wyłącz „Confirm email” w ustawieniach Auth (lub potwierdź adresy ręcznie).
 3. Uzupełnij `TEST_USER_A_*` i `TEST_USER_B_*` w `.env` (patrz `.env.example`).
 
-### CI
+### CI / CD
 
-GitHub Actions (`.github/workflows/ci.yml`): lint → test → build → e2e (mocki, bez sekretów).
+GitHub Actions (`.github/workflows/ci.yml`):
 
-Opcjonalny workflow (`.github/workflows/smoke-integration.yml`, `workflow_dispatch`): smoke produkcji + test RLS z sekretami `SUPABASE_*` i `TEST_USER_*`.
+- **Każdy push/PR:** lint → unit → build (placeholder) → e2e
+- **Push na `main`:** dodatkowo deploy na here.now + smoke produkcji
+
+Konfiguracja sekretów: [`github-cicd.md`](github-cicd.md).
+
+Opcjonalny workflow (`.github/workflows/smoke-integration.yml`, `workflow_dispatch`): smoke + test RLS.
 
 ## Monitoring
 

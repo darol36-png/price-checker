@@ -1,10 +1,14 @@
-name: CI
+name: CI & Deploy
 
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -28,7 +32,7 @@ jobs:
       - name: Unit tests
         run: npm test
 
-      - name: Build
+      - name: Build (verify compilation)
         run: npm run build
         env:
           VITE_SUPABASE_URL: https://placeholder.supabase.co
@@ -41,5 +45,41 @@ jobs:
         run: npm run test:e2e
         env:
           CI: true
-          VITE_SUPABASE_URL: https://placeholder.supabase.co
-          VITE_SUPABASE_ANON_KEY: placeholder-key
+
+  deploy:
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm ci --prefix site
+
+      - name: Install here.now publish script
+        run: npx --yes skills add heredotnow/skill --skill here-now -g
+
+      - name: Build and deploy to here.now
+        run: bash scripts/ci-deploy.sh
+        env:
+          HERENOW_API_KEY: ${{ secrets.HERENOW_API_KEY }}
+          HERENOW_SLUG: ${{ vars.HERENOW_SLUG }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Smoke test production
+        run: npm run test:smoke
+        env:
+          CI: true
+          PLAYWRIGHT_BASE_URL: https://${{ vars.HERENOW_SLUG }}.here.now
