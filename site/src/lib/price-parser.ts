@@ -115,6 +115,28 @@ function extractFromMeta(content: string): ExtractedPrice | null {
 const NOISE_LINE =
   /rata|raty|darmowa\s+dostaw|dostawa\s+od|rabat|taniej|market|firm\s+od|koszt|leasing|ratę|mies|rrso|kupon|coupon|subskrypc|google\s+ai|już\s+od\s+[\d,.]+\s*zł\/|0,00\s*zł|0\.00\s*zł/i
 
+const RELATED_PRODUCT_MARKERS = [
+  /Propozycje dla Ciebie/i,
+  /SPONSOROWANE/i,
+  /Podobne produkty/i,
+  /Rekomendowane dla Ciebie/i,
+  /Klienci, którzy kupili/i,
+  /Inne kupowały także/i,
+]
+
+function getMainProductContent(content: string): string {
+  let end = content.length
+
+  for (const marker of RELATED_PRODUCT_MARKERS) {
+    const match = marker.exec(content)
+    if (match && match.index > 0 && match.index < end) {
+      end = match.index
+    }
+  }
+
+  return content.slice(0, end)
+}
+
 function isInstallmentPrice(price: number, allCandidates: number[]): boolean {
   if (allCandidates.length <= 1) return false
   const max = Math.max(...allCandidates)
@@ -208,6 +230,18 @@ function pickBestCandidate(candidates: number[]): number | null {
   return Math.min(...unique)
 }
 
+function extractMegacenaPrice(content: string): ExtractedPrice | null {
+  const match = content.match(/Megacena\s*\n\s*([\d][\d\s.,]*)\s*zł/i)
+  if (match?.[1]) {
+    const price = parseNumber(match[1])
+    if (price != null && price > 0) {
+      return { price, currency: 'PLN' }
+    }
+  }
+
+  return null
+}
+
 function extractPromoPrice(content: string): ExtractedPrice | null {
   const promoPatterns = [
     /cena\s+promocyjna[:\s]+([\d][\d\s.,]*)\s*zł/i,
@@ -253,16 +287,21 @@ function extractForeignCurrency(content: string): ExtractedPrice | null {
 }
 
 function extractFromRegex(content: string): ExtractedPrice | null {
-  const promo = extractPromoPrice(content)
+  const megacena = extractMegacenaPrice(content)
+  if (megacena) return megacena
+
+  const mainContent = getMainProductContent(content)
+
+  const promo = extractPromoPrice(mainContent)
   if (promo) return promo
 
-  const candidates = collectPlnCandidates(content)
+  const candidates = collectPlnCandidates(mainContent)
   const best = pickBestCandidate(candidates)
   if (best != null) {
     return { price: best, currency: 'PLN' }
   }
 
-  const boldMatch = content.match(/\*\*([\d][\d\s.,]*)\*\*\s*zł/i)
+  const boldMatch = mainContent.match(/\*\*([\d][\d\s.,]*)\*\*\s*zł/i)
   if (boldMatch?.[1]) {
     const price = parseNumber(boldMatch[1])
     if (price != null && price > 0) {

@@ -124,4 +124,22 @@ describe('extractPrice', () => {
     const result = extractPrice(html)
     expect(result).toEqual({ price: 6299, currency: 'PLN' })
   })
+
+  it('extracts Empik main product price and ignores sponsored recommendations', () => {
+    const markdown = `
+      # Honor Magic V5 5G Dual Sim 16GB RAM 512GB - Black
+      Megacena
+      5191,99 zł
+      Dodaj do koszyka
+      Szybsza wysyłka od **6020,94 zł**
+      ### Propozycje dla Ciebie
+      Samsung Galaxy A57
+      1500,00 zł
+      SPONSOROWANE
+      Smartfon Xiaomi POCO X8 Pro 5G
+      1590,75 zł
+    `
+    const result = extractPrice(markdown)
+    expect(result).toEqual({ price: 5191.99, currency: 'PLN' })
+  })
 })
