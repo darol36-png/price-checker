@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { Product } from '../types/database'
+import { normalizeProductUrl } from '../lib/product-url'
 import { supabase } from '../lib/supabase-client'
 import { useAuth } from './useAuth'
 
@@ -52,9 +53,11 @@ export function useProducts() {
     if (!user) return { error: 'Brak zalogowanego użytkownika' }
     if (!isValidUrl(url)) return { error: 'Nieprawidłowy adres URL' }
 
+    const normalizedUrl = normalizeProductUrl(url)
+
     const { error: insertError } = await supabase.from('products').insert({
       name: name.trim(),
-      url: url.trim(),
+      url: normalizedUrl,
     })
 
     if (insertError) return { error: insertError.message }
@@ -66,8 +69,9 @@ export function useProducts() {
   const updateProduct = async (id: string, name: string, url: string) => {
     if (!isValidUrl(url)) return { error: 'Nieprawidłowy adres URL' }
 
+    const normalizedUrl = normalizeProductUrl(url)
     const existing = products.find((p) => p.id === id)
-    const urlChanged = existing && existing.url !== url.trim()
+    const urlChanged = existing && existing.url !== normalizedUrl
 
     const updates: {
       name: string
@@ -76,7 +80,7 @@ export function useProducts() {
       last_checked_at?: null
     } = {
       name: name.trim(),
-      url: url.trim(),
+      url: normalizedUrl,
     }
 
     if (urlChanged) {

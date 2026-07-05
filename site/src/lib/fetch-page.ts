@@ -1,4 +1,5 @@
 import { isBlockedPage } from './bot-page'
+import { normalizeProductUrl } from './product-url'
 
 export function fetchErrorMessage(status: number): string {
   if (status === 429) {
@@ -142,15 +143,17 @@ async function fetchViaJinaPost(url: string): Promise<string> {
 }
 
 export async function fetchPageContent(url: string): Promise<string> {
-  if (isIspotUrl(url)) {
-    return fetchIspotPage(url)
+  const fetchUrl = normalizeProductUrl(url)
+
+  if (isIspotUrl(fetchUrl)) {
+    return fetchIspotPage(fetchUrl)
   }
 
   try {
-    return await fetchViaJinaGet(url)
+    return await fetchViaJinaGet(fetchUrl)
   } catch (err) {
     if (err instanceof Error && err.message === 'blocked') {
-      return fetchViaJinaPost(url)
+      return fetchViaJinaPost(fetchUrl)
     }
     throw err
   }
